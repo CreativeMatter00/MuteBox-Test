@@ -1,5 +1,5 @@
 import { connect } from "@/dbConfig/dbConfig";
-import Post from "@/models/postModel";
+import Option from "@/models/optionModel";
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 
@@ -9,10 +9,12 @@ export async function POST(request: NextRequest) {
   try {
     const reqBody = await request.json();
 
+    console.log("reqBody", reqBody);
+
     // ? Manually set the createdAt field
     reqBody.createdAt = new Date().toLocaleString();
 
-    const newPost = new Post(reqBody);
+    const newPost = new Option(reqBody);
 
     const savedPost = await newPost.save();
 
@@ -51,7 +53,7 @@ export async function GET(request: NextRequest) {
       }
 
       // Token is valid, proceed to fetch posts
-      const posts = await Post.find().sort({ createdAt: -1 });
+      const posts = await Option.find().sort({ createdAt: -1 });
       return NextResponse.json(posts);
     } else {
       // Token cookie is missing, return 401 Unauthorized

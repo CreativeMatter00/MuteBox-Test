@@ -20,6 +20,24 @@ export const getALLPost = async () => {
   }
 };
 
+export const getALLOption = async () => {
+  try {
+    const response = await axios.get(`/api/option`);
+    return response.data;
+  } catch (error: any) {
+    console.log(error);
+    if (
+      error?.response?.data?.error === "invalid signature" ||
+      error?.response?.data?.error === "invalid token" ||
+      error?.response?.data?.error === "jwt expired"
+    ) {
+      const response = await axios.get(`/api/logout`);
+      window.location.href = "/login";
+      return response;
+    }
+  }
+};
+
 //? Get logout
 
 export const getLogout = async () => {

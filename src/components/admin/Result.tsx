@@ -38,7 +38,7 @@ const Result = () => {
   return (
     <div className="container p-4 mt-20 max-md:mt-28">
       <p className="text-sky-900 text-lg font-semibold my-4">
-        What option do you want for Sunday Lunch?
+        What option do you want for Sunday Lunch?hh
       </p>
       <ul className="text-xl">
         <li className="text-gray-700 mb-2">

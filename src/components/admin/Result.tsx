@@ -36,14 +36,27 @@ const Result = () => {
   });
 
   return (
-    <div className="container p-4">
+    <div className="container p-4 mt-20 max-md:mt-28">
       <p className="text-sky-900 text-lg font-semibold my-4">
-        What option do you want for sunday Lunch ?
+        What option do you want for Sunday Lunch?
       </p>
-      <ul>
-        <li>Rice and beef:{counts?.rice}</li>
-        <li>Polao and beef :{counts?.polao}</li>
-        <li>Khichuri and beef :{counts?.khichuri}</li>
+      <ul className="text-xl">
+        <li className="text-gray-700 mb-2">
+          Rice and beef:{" "}
+          <span className="text-sky-800 font-bold text-xl">{counts?.rice}</span>
+        </li>
+        <li className="text-gray-700 mb-2">
+          Polao and beef:{" "}
+          <span className="text-sky-800 font-bold text-xl">
+            {counts?.polao}
+          </span>
+        </li>
+        <li className="text-gray-700 mb-2">
+          Khichuri and beef:{" "}
+          <span className="text-sky-800 font-bold text-xl">
+            {counts?.khichuri}
+          </span>
+        </li>
       </ul>
     </div>
   );

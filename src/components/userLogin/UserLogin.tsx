@@ -1,29 +1,27 @@
 "use client";
-import React, { useState } from "react";
+
+import { useForm } from "react-hook-form";
+import { BackgroundGradient } from "../ui/background-gradient";
+import { useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { cn } from "@/lib/utils";
-import { BackgroundGradient } from "../ui/background-gradient";
-import { useForm } from "react-hook-form";
-import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { SyncLoader } from "react-spinners";
-import "react-toastify/dist/ReactToastify.css";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
+import { cn } from "@/lib/utils";
+import { SyncLoader } from "react-spinners";
+import BottomGradient from "../ui/BottomGradient";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface ILoginInput {
-  username: string;
+  userEmail: string;
   password: string;
 }
 
-export function LoginForm() {
+const UserLogin = () => {
   const [isLoading, setIsLoading] = useState<boolean>();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const router = useRouter();
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
 
   const {
     register,
@@ -32,36 +30,12 @@ export function LoginForm() {
     reset,
   } = useForm<ILoginInput>();
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   const onSubmit = (data: ILoginInput) => {
     setIsLoading(true);
-    fetch(`/api/login`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        if (data.success === true) {
-          router.push("/admin");
-          reset();
-        } else {
-          toast.error(data.error, {
-            position: "top-left",
-            autoClose: 3001,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          });
-        }
-      })
-      .finally(() => setIsLoading(false));
   };
 
   return (
@@ -70,29 +44,27 @@ export function LoginForm() {
         <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200 uppercase">
           Login Here
         </h2>
-
         <form className="my-8 w-full" onSubmit={handleSubmit(onSubmit)}>
           <LabelInputContainer className="mb-4">
-            <Label htmlFor="userName">User Name*</Label>
+            <Label htmlFor="userName">User Email*</Label>
             <Input
               id="text"
-              placeholder="user name"
+              placeholder="Enter your email address"
               type="text"
-              {...register("username", {
+              {...register("userEmail", {
                 required: true,
-                minLength: 3,
+                pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
               })}
             />
-            {errors?.username?.type === "required" && (
+            {errors?.userEmail?.type === "required" && (
               <span className="text-xs text-red-700">
-                Please provide a User Name
+                Please provide a User Email
               </span>
             )}
-
-            {errors?.username?.type === "minLength" && (
-              <p className="text-xs text-red-700">
-                User Name must be at least 3 characters long
-              </p>
+            {errors?.userEmail?.type === "pattern" && (
+              <span className="text-xs text-red-700">
+                Invalid email address
+              </span>
             )}
           </LabelInputContainer>
 
@@ -134,7 +106,6 @@ export function LoginForm() {
               </button>
             </div>
           </LabelInputContainer>
-
           <button
             className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset] "
             type="submit"
@@ -152,16 +123,9 @@ export function LoginForm() {
       </div>
     </BackgroundGradient>
   );
-}
-
-const BottomGradient = () => {
-  return (
-    <>
-      <span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
-      <span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
-    </>
-  );
 };
+
+export default UserLogin;
 
 const LabelInputContainer = ({
   children,

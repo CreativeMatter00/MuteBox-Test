@@ -45,7 +45,11 @@ export function middleware(request: NextRequest) {
 
   const token = request.cookies.get("token")?.value || "";
 
+  console.log(token);
+
   const role = parseRoleFromToken(token);
+
+  console.log(role);
 
   // If user is not logged in
   if (!token) {

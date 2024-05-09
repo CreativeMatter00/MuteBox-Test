@@ -12,11 +12,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
 import "react-toastify/dist/ReactToastify.css";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface ILoginInput {
   userEmail: string;
   password: string;
+  role: string;
 }
 
 const CreateUser = () => {
@@ -86,6 +87,11 @@ const CreateUser = () => {
                       className="my-8 w-full"
                       onSubmit={handleSubmit(onSubmit)}
                     >
+                      <input
+                        className="hidden"
+                        value="user"
+                        {...register("role", {})}
+                      />
                       <LabelInputContainer className="mb-4">
                         <Label htmlFor="userName">User Email*</Label>
                         <Input

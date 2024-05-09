@@ -54,6 +54,12 @@ function Navbar({ className }: { className?: string }) {
           >
             Result
           </Link>
+          <Link
+            href="/admin/create-user"
+            className="hover:text-sky-700 text-lg font-semibold"
+          >
+            User
+          </Link>
           <button
             onClick={logoutRequest}
             className="hover:text-red-700 text-lg font-semibold"

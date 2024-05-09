@@ -22,23 +22,12 @@ interface ILoginInput {
 export function LoginForm(request: NextRequest) {
   const [isLoading, setIsLoading] = useState<boolean>();
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [token, setToken] = useState("");
+  //   const [token, setToken] = useState("");
   const router = useRouter();
 
+  const token = Cookies.get("token");
+
   console.log("token", token);
-
-  //   const token = request.cookies.get("token")?.value || "";
-  const role = parseRoleFromToken(token);
-
-  console.log("role", role);
-
-  useEffect(() => {
-    // Get cookie on component mount
-    const tokenCookie = Cookies.get("token");
-    if (tokenCookie) {
-      setToken(tokenCookie);
-    }
-  }, []);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -65,13 +54,22 @@ export function LoginForm(request: NextRequest) {
       })
       .then((data) => {
         if (data.success === true) {
-          if (role === "admin") {
-            router.push("/admin");
-          } else if (role === "user") {
-            router.push("/opinion");
-          }
+          const token = data.token; // Assuming your API returns the token
+          const role = parseRoleFromToken(token);
 
-          reset();
+          // Redirect based on the role
+          switch (role) {
+            case "admin":
+              router.push("/admin");
+              break;
+            case "user":
+              router.push("/opinion");
+              break;
+            default:
+              // Redirect to a default page if role is neither admin nor user
+              router.push("/login");
+              break;
+          }
         } else {
           toast.error(data.error, {
             position: "top-left",

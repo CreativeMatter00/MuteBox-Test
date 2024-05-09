@@ -7,14 +7,11 @@ import jwt from "jsonwebtoken";
 connect();
 
 export async function POST(request: NextRequest) {
-	console.log("test");
 	try {
 		const reqBody = await request.json();
 		const { email, password } = reqBody;
 
 		// ? check if user exists
-
-		console.log("test");
 
 		const user = await User.findOne({ email });
 
@@ -55,12 +52,11 @@ export async function POST(request: NextRequest) {
 		const response = NextResponse.json({
 			message: "login successfully",
 			success: true,
+			token: token,
 		});
 		response.cookies.set("token", token, {
 			httpOnly: true,
 		});
-
-		console.log(response);
 
 		return response;
 

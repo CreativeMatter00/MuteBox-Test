@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
@@ -10,16 +10,24 @@ import { useRouter } from "next/navigation";
 import { SyncLoader } from "react-spinners";
 import "react-toastify/dist/ReactToastify.css";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
+import jwt from "jsonwebtoken";
+import type { NextRequest } from "next/server";
+import Cookies from "js-cookie";
 
 interface ILoginInput {
-	username: string;
+	email: string;
 	password: string;
 }
 
-export function LoginForm() {
+export function LoginForm(request: NextRequest) {
 	const [isLoading, setIsLoading] = useState<boolean>();
 	const [showPassword, setShowPassword] = useState<boolean>(false);
+	//   const [token, setToken] = useState("");
 	const router = useRouter();
+
+	const token = Cookies.get("token");
+
+	console.log("token", token);
 
 	const togglePasswordVisibility = () => {
 		setShowPassword(!showPassword);
@@ -46,9 +54,22 @@ export function LoginForm() {
 			})
 			.then((data) => {
 				if (data.success === true) {
-					console.log(document.cookie);
-					router.push("/admin");
-					reset();
+					const token = data.token; // Assuming your API returns the token
+					const role = parseRoleFromToken(token);
+
+					// Redirect based on the role
+					switch (role) {
+						case "admin":
+							router.push("/admin");
+							break;
+						case "user":
+							router.push("/opinion");
+							break;
+						default:
+							// Redirect to a default page if role is neither admin nor user
+							router.push("/login");
+							break;
+					}
 				} else {
 					toast.error(data.error, {
 						position: "top-left",
@@ -74,26 +95,26 @@ export function LoginForm() {
 
 				<form className="my-8 w-full" onSubmit={handleSubmit(onSubmit)}>
 					<LabelInputContainer className="mb-4">
-						<Label htmlFor="userName">User Name*</Label>
+						<Label htmlFor="userName">User Email*</Label>
 						<Input
 							id="text"
-							placeholder="user name"
+							placeholder="Enter your email address"
 							type="text"
-							{...register("username", {
+							{...register("email", {
 								required: true,
-								minLength: 3,
+								pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
 							})}
 						/>
-						{errors?.username?.type === "required" && (
+						{errors?.email?.type === "required" && (
 							<span className="text-xs text-red-700">
-								Please provide a User Name
+								Please provide a Email
 							</span>
 						)}
 
-						{errors?.username?.type === "minLength" && (
-							<p className="text-xs text-red-700">
-								User Name must be at least 3 characters long
-							</p>
+						{errors?.email?.type === "pattern" && (
+							<span className="text-xs text-red-700">
+								Invalid email address
+							</span>
 						)}
 					</LabelInputContainer>
 
@@ -177,3 +198,24 @@ const LabelInputContainer = ({
 		</div>
 	);
 };
+
+function parseRoleFromToken(token: string): string {
+	try {
+		// Decode the JWT token to get the payload
+		const decodedToken = jwt.decode(token);
+
+		// Extract the role claim from the payload
+		const role = decodedToken?.role;
+
+		// Check if role exists and return it
+		if (role) {
+			return role;
+		} else {
+			// If role doesn't exist in token, return a default role
+			return "public";
+		}
+	} catch (error) {
+		console.error("Error parsing token:", error);
+		return "public"; // Return default role in case of error
+	}
+}

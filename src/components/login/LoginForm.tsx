@@ -22,10 +22,8 @@ interface ILoginInput {
 export function LoginForm(request: NextRequest) {
   const [isLoading, setIsLoading] = useState<boolean>();
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  //   const [token, setToken] = useState("");
+  const [token, setToken] = useState("");
   const router = useRouter();
-
-  const token = Cookies.get("token");
 
   console.log("token", token);
 
@@ -33,6 +31,14 @@ export function LoginForm(request: NextRequest) {
   const role = parseRoleFromToken(token);
 
   console.log("role", role);
+
+  useEffect(() => {
+    // Get cookie on component mount
+    const tokenCookie = Cookies.get("token");
+    if (tokenCookie) {
+      setToken(tokenCookie);
+    }
+  }, []);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -59,14 +65,11 @@ export function LoginForm(request: NextRequest) {
       })
       .then((data) => {
         if (data.success === true) {
-          console.log("logged in ok");
-
           if (role === "admin") {
             router.push("/admin");
           } else if (role === "user") {
             router.push("/opinion");
           }
-          console.log("logged in ok1");
 
           reset();
         } else {

@@ -46,6 +46,7 @@ export function LoginForm() {
 			})
 			.then((data) => {
 				if (data.success === true) {
+					console.log(document.cookie);
 					router.push("/admin");
 					reset();
 				} else {

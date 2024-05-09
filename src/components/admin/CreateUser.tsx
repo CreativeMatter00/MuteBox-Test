@@ -15,7 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 
 interface ILoginInput {
-  userEmail: string;
+  email: string;
   password: string;
   role: string;
 }
@@ -50,6 +50,7 @@ const CreateUser = () => {
       })
       .then((data) => {
         if (data.success === true) {
+          alert("Success");
           // router.push("/admin");
           reset();
         } else {
@@ -98,17 +99,17 @@ const CreateUser = () => {
                           id="text"
                           placeholder="Enter email address"
                           type="text"
-                          {...register("userEmail", {
+                          {...register("email", {
                             required: true,
                             pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                           })}
                         />
-                        {errors?.userEmail?.type === "required" && (
+                        {errors?.email?.type === "required" && (
                           <span className="text-xs text-red-700">
                             Please provide a User Email
                           </span>
                         )}
-                        {errors?.userEmail?.type === "pattern" && (
+                        {errors?.email?.type === "pattern" && (
                           <span className="text-xs text-red-700">
                             Invalid email address
                           </span>

@@ -12,7 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 
 interface ILoginInput {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -73,26 +73,26 @@ export function LoginForm() {
 
         <form className="my-8 w-full" onSubmit={handleSubmit(onSubmit)}>
           <LabelInputContainer className="mb-4">
-            <Label htmlFor="userName">User Name*</Label>
+            <Label htmlFor="email">User Email*</Label>
             <Input
               id="text"
-              placeholder="user name"
+              placeholder="Enter your email address"
               type="text"
-              {...register("username", {
+              {...register("email", {
                 required: true,
-                minLength: 3,
+                pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
               })}
             />
-            {errors?.username?.type === "required" && (
+            {errors?.email?.type === "required" && (
               <span className="text-xs text-red-700">
-                Please provide a User Name
+                Please provide a Email
               </span>
             )}
 
-            {errors?.username?.type === "minLength" && (
-              <p className="text-xs text-red-700">
-                User Name must be at least 3 characters long
-              </p>
+            {errors?.email?.type === "pattern" && (
+              <span className="text-xs text-red-700">
+                Invalid email address
+              </span>
             )}
           </LabelInputContainer>
 

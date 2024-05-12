@@ -36,7 +36,6 @@ export function LoginForm() {
 		register,
 		handleSubmit,
 		formState: { errors },
-		reset,
 	} = useForm<ILoginInput>();
 
 	const onSubmit = (data: ILoginInput) => {

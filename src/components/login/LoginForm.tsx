@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
@@ -10,19 +10,18 @@ import { useRouter } from "next/navigation";
 import { SyncLoader } from "react-spinners";
 import "react-toastify/dist/ReactToastify.css";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
-import jwt from "jsonwebtoken";
-import type { NextRequest } from "next/server";
 import Cookies from "js-cookie";
+import parseRoleFromToken from "@/helpers/jwtHelper";
 
 interface ILoginInput {
 	email: string;
 	password: string;
 }
 
-export function LoginForm(request: NextRequest) {
+export function LoginForm() {
 	const [isLoading, setIsLoading] = useState<boolean>();
 	const [showPassword, setShowPassword] = useState<boolean>(false);
-	//   const [token, setToken] = useState("");
+
 	const router = useRouter();
 
 	const token = Cookies.get("token");
@@ -54,7 +53,7 @@ export function LoginForm(request: NextRequest) {
 			})
 			.then((data) => {
 				if (data.success === true) {
-					const token = data.token; // Assuming your API returns the token
+					const token = data.token;
 					const role = parseRoleFromToken(token);
 
 					// Redirect based on the role
@@ -198,24 +197,3 @@ const LabelInputContainer = ({
 		</div>
 	);
 };
-
-function parseRoleFromToken(token: string): string {
-	try {
-		// Decode the JWT token to get the payload
-		const decodedToken = jwt.decode(token);
-
-		// Extract the role claim from the payload
-		const role = decodedToken?.role;
-
-		// Check if role exists and return it
-		if (role) {
-			return role;
-		} else {
-			// If role doesn't exist in token, return a default role
-			return "public";
-		}
-	} catch (error) {
-		console.error("Error parsing token:", error);
-		return "public"; // Return default role in case of error
-	}
-}
